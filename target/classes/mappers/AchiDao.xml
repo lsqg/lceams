@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssm.demo.dao.AchiDao">
+    <resultMap type="com.ssm.demo.entity.Achi" id="AchiResult">
+        <result property="achiId" column="achi_id"/>
+        <result property="studentId" column="student_id"/>
+        <result property="courseId" column="course_id"/>
+        <result property="achi" column="achi"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+    <select id="findAchis" parameterType="Map" resultMap="AchiResult">
+        select achi_id,tb_ssm_achi.student_id,tb_ssm_student.student_name as studentName,
+            tb_ssm_achi.course_id,tb_ssm_course.course_name as courseName,achi,
+            tb_ssm_achi.create_time,tb_ssm_achi.update_time
+        from tb_ssm_achi
+        left join tb_ssm_student on tb_ssm_achi.student_id = tb_ssm_student.student_id
+        left join tb_ssm_course on tb_ssm_achi.course_id = tb_ssm_course.course_id
+        where tb_ssm_achi.is_deleted=0
+        <if test="keyword != null and keyword.trim() != ''">
+            and tb_ssm_achi.student_id LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+        order by tb_ssm_achi.student_id desc
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="getTotalAchis" parameterType="Map" resultType="int">
+        select count(*) from tb_ssm_achi
+        where is_deleted=0
+        <if test="keyword != null and keyword.trim() != ''">
+            and student_id LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+    </select>
+
+    <insert id="insertAchi" useGeneratedKeys="true" keyProperty="id" parameterType="com.ssm.demo.entity.Achi">
+		insert into
+		tb_ssm_achi(achi_id,student_id,course_id,
+		    achi)
+		values(#{achiId},#{studentId},#{courseId}
+		    ,#{achi})
+	</insert>
+
+    <update id="updAchi" parameterType="com.ssm.demo.entity.Achi">
+		update tb_ssm_achi
+		set
+		    student_id=#{studentId},
+		    course_id=#{courseId},
+		    achi=#{achi},
+		    update_time=#{updateTime}
+		where achi_id=#{achiId}
+	</update>
+
+    <select id="getAchiById" parameterType="java.lang.String" resultMap="AchiResult">
+		select achi_id,student_id,
+		    course_id,achi,
+		    create_time,update_time
+		from tb_ssm_achi where achi_id=#{achiId} and is_deleted=0
+	</select>
+
+    <update id="deleteBatch">
+        delete from tb_ssm_achi where achi_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="getAchiSelect" resultType="com.ssm.demo.utils.SelectOption">
+        select
+            course_id as id,
+            course_name as val
+        from tb_ssm_course
+        where is_deleted=0
+    </select>
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssm.demo.dao.StudentDao">
+    <resultMap type="com.ssm.demo.entity.Student" id="StudentResult">
+        <result property="studentId" column="student_id"/>
+        <result property="grade" column="grade"/>
+        <result property="studentName" column="student_name"/>
+        <result property="studentSex" column="student_sex"/>
+        <result property="studentAge" column="student_age"/>
+        <result property="parentTel" column="parent_tel"/>
+        <result property="address" column="address"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+    <select id="findStudents" parameterType="Map" resultMap="StudentResult">
+        select student_id,tb_ssm_grade.grade_name as grade,student_name,
+            case when student_sex = '0' then '男'
+            when student_sex = '1' then '女'
+            else '其他' end as studentSex,
+            student_age,parent_tel,
+            address,tb_ssm_student.create_time,tb_ssm_student.update_time
+        from tb_ssm_student
+        left join tb_ssm_grade on tb_ssm_student.grade = tb_ssm_grade.grade_id
+        where tb_ssm_student.is_deleted=0
+        <if test="keyword != null and keyword.trim() != ''">
+            and student_name LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+        order by student_id desc
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="getTotalStudents" parameterType="Map" resultType="int">
+        select count(*) from tb_ssm_student
+        where is_deleted=0
+        <if test="keyword != null and keyword.trim() != ''">
+            and student_name LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+    </select>
+
+    <insert id="insertStudent" useGeneratedKeys="true" keyProperty="id" parameterType="com.ssm.demo.entity.Student">
+		insert into
+		tb_ssm_student(student_id,grade,student_name,student_sex,
+		    student_age,parent_tel,address)
+		values(#{studentId},#{grade},#{studentName},#{studentSex}
+		    ,#{studentAge},#{parentTel},#{address})
+	</insert>
+
+    <update id="updStudent" parameterType="com.ssm.demo.entity.Student">
+		update tb_ssm_student
+		set
+		    grade=#{grade},
+		    student_name=#{studentName},
+		    student_sex=#{studentSex},
+		    student_age=#{studentAge},
+		    parent_tel=#{parentTel},
+		    address=#{address},
+		    update_time=#{updateTime}
+		where student_id=#{studentId}
+	</update>
+
+    <select id="getStudentById" parameterType="java.lang.Long" resultMap="StudentResult">
+		select student_id,grade,student_name,student_sex,
+		    student_age,parent_tel,address,
+		    create_time,update_time
+		from tb_ssm_student where student_id=#{studentId} and is_deleted=0
+	</select>
+
+    <update id="deleteBatch">
+        delete from tb_ssm_student where student_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="getGradeSelect" resultType="com.ssm.demo.utils.SelectOption">
+        select
+            grade_id as id,
+            grade_name as val
+        from tb_ssm_grade
+        where is_deleted=0
+    </select>
+</mapper>

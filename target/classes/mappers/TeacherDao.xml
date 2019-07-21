@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssm.demo.dao.TeacherDao">
+    <resultMap type="com.ssm.demo.entity.Teacher" id="TeacherResult">
+        <result property="teacherId" column="teacher_id"/>
+        <result property="teacherName" column="teacher_name"/>
+        <result property="teacherSex" column="teacher_sex"/>
+        <result property="teacherTel" column="teacher_tel"/>
+        <result property="teacherAddress" column="teacher_address"/>
+        <result property="teacherExpertise" column="teacher_expertise"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+    <select id="findTeachers" parameterType="Map" resultMap="TeacherResult">
+        select teacher_id,teacher_name,
+            case when teacher_sex = '0' then '男'
+            when teacher_sex = '1' then '女'
+            else '其他' end as teacherSex,
+            teacher_tel,teacher_address,
+            teacher_expertise,create_time,update_time
+        from tb_ssm_teacher
+        where is_deleted=0
+        <if test="keyword != null and keyword.trim() != ''">
+            and teacher_name LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+        order by teacher_id desc
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="getTotalTeachers" parameterType="Map" resultType="int">
+        select count(*) from tb_ssm_teacher
+        where is_deleted=0
+        <if test="keyword != null and keyword.trim() != ''">
+            and teacher_name LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+    </select>
+
+    <insert id="insertTeacher" useGeneratedKeys="true" keyProperty="id" parameterType="com.ssm.demo.entity.Teacher">
+		insert into
+		tb_ssm_teacher(teacher_id,teacher_name,teacher_sex,
+		    teacher_tel,teacher_address,teacher_expertise)
+		values(#{teacherId},#{teacherName},#{teacherSex}
+		    ,#{teacherTel},#{teacherAddress},#{teacherExpertise})
+	</insert>
+
+    <update id="updTeacher" parameterType="com.ssm.demo.entity.Teacher">
+		update tb_ssm_teacher
+		set
+		    teacher_name=#{teacherName},
+		    teacher_sex=#{teacherSex},
+		    teacher_tel=#{teacherTel},
+		    teacher_address=#{teacherAddress},
+		    teacher_expertise=#{teacherExpertise},
+		    update_time=#{updateTime}
+		where teacher_id=#{teacherId}
+	</update>
+
+    <select id="getTeacherById" parameterType="java.lang.Long" resultMap="TeacherResult">
+		select teacher_id,teacher_name,teacher_sex,
+		    teacher_tel,teacher_address,teacher_expertise,
+		    create_time,update_time
+		from tb_ssm_teacher where teacher_id=#{teacherId} and is_deleted=0
+	</select>
+
+    <update id="deleteBatch">
+        delete from tb_ssm_teacher where teacher_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+</mapper>

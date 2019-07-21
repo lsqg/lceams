@@ -1,0 +1,164 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>教务后台管理系统</title>
+    <!-- jqgrid ui -->
+    <link href="plugins/jqgrid-5.3.0/ui.jqgrid-bootstrap4.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.css">
+    <!-- sweet alert -->
+    <link rel="stylesheet" href="plugins/sweetalert/sweetalert.css">
+    <link href="plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="dist/css/main.css" rel="stylesheet"/>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/adminlte.min.css">
+    <!-- sweet alert -->
+    <link rel="stylesheet" href="plugins/sweetalert/sweetalert.css">
+    <link href="plugins/custombox/custombox.min.css" rel="stylesheet">
+
+</head>
+<body class="hold-transition sidebar-mini" onLoad="checkCookie();">
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 text-dark">用户管理</h1>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="grid-btn">
+                                <button class="btn btn-info" onclick="userAdd()"><i
+                                        class="fa fa-plus"></i>&nbsp;新增
+                                </button>
+                                <button class="btn btn-warning" onclick="userEdit()"><i
+                                        class="fa fa-edit"></i>&nbsp;查看
+                                </button>
+                                <button class="btn btn-danger" onclick="userDel()"><i
+                                        class="fa fa-remove"></i>&nbsp;删除
+                                </button>
+                                <button class="btn btn-file" onclick="window.location.href='/users/export'"><i
+                                        class="fa fa-download"></i>&nbsp;导出
+                                </button>
+                            </div>
+                            <table id="jqGrid" class="table table-bordered">
+                            </table>
+                            <div id="jqGridPager"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+
+        <div class="content" id="modalAdd" style="display: none">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="width: 400px;height: 420px;">
+                    <div class="modal-header">
+                        <h6 class="modal-title" id="userModalLabel">用户添加</h6>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <div class="form-group">
+                                <div class="alert alert-danger add-error-info">错误信息展示栏。</div>
+                            </div>
+                            <div class="form-group">
+                                <font color="red">*</font>
+                                <label for="userName" class="control-label">用户名:</label>
+                                <input type="text" class="form-control" id="userName">
+                            </div>
+                            <div class="form-group">
+                                <font color="red">*</font>
+                                <label for="userType" class="control-label">用户类型:</label>
+                                <select  class="form-control" id="userType">
+                                    <option value="0">管理员</option>
+                                    <option value="1">教师</option>
+                                    <option value="2">学生</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <font color="red">*</font>
+                                <label for="password" class="control-label">密码:</label>
+                                <input type="text" class="form-control" id="password">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="cancelAdd">取消</button>
+                        <button type="button" class="btn btn-primary" id="saveButton">确认</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.content -->
+        </div>
+
+        <div class="content" id="modalEdit" style="display: none">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content" style="width: 400px;height: 340px;">
+                    <div class="modal-header">
+                        <h6 class="modal-title" id="modalEditLabel">用户编辑</h6>
+                    </div>
+                    <div class="modal-body">
+                        <form>
+                            <input type="hidden" id="userId" value="0">
+                            <div class="form-group">
+                                <div class="alert alert-danger edit-error-info">错误信息展示栏。</div>
+                            </div>
+                            <div class="form-group">
+                                <label for="passwordEdit" class="control-label">新密码:</label>
+                                <input type="text" class="form-control" id="passwordEdit">
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" id="cancelEdit">取消</button>
+                        <button type="button" class="btn btn-primary" id="editButton">确认</button>
+                    </div>
+                </div>
+            </div>
+            <!-- /.content -->
+        </div>
+
+        <!-- Control Sidebar -->
+        <aside class="control-sidebar control-sidebar-dark">
+            <!-- Control sidebar content goes here -->
+        </aside>
+        <!-- /.control-sidebar -->
+    </div>
+    <!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="plugins/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="plugins/jQueryUI/jquery-ui.min.js"></script>
+<!-- sweet alert -->
+<script src="plugins/sweetalert/sweetalert.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="plugins/jqgrid-5.3.0/grid.locale-cn.js"></script>
+<script src="plugins/jqgrid-5.3.0/jquery.jqGrid.min.js"></script>
+<script src="plugins/custombox/custombox.min.js"></script>
+<script src="plugins/custombox/custombox.legacy.min.js"></script>
+<!-- ajax upload -->
+<script src="plugins/ajaxupload/ajaxupload.js"></script>
+<script src="dist/js/public.js"></script>
+<script src="dist/js/user.js"></script>
+<script src="dist/js/adminlte.js"></script>
+</body>
+</html>

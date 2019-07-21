@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssm.demo.dao.CourseDao">
+    <resultMap type="com.ssm.demo.entity.Course" id="CourseResult">
+        <result property="courseId" column="course_id"/>
+        <result property="courseName" column="course_name"/>
+        <result property="courseTeacher" column="course_teacher"/>
+        <result property="courseInfo" column="course_info"/>
+        <result property="courseGrade" column="course_grade"/>
+        <result property="startTime" column="start_time" jdbcType="TIMESTAMP"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+    <select id="findCourses" parameterType="Map" resultMap="CourseResult">
+        select course_id,course_name,
+            teacher_name as courseTeacher,course_info,course_grade,
+            start_time,c.create_time,c.update_time
+        from tb_ssm_course c
+        left join tb_ssm_teacher on c.course_teacher = tb_ssm_teacher.teacher_id
+        where c.is_deleted=0
+        <if test="keyword != null and keyword.trim() != ''">
+            and course_name LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+        order by course_id desc
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="getTotalCourses" parameterType="Map" resultType="int">
+        select count(*) from tb_ssm_course
+        where is_deleted=0
+        <if test="keyword != null and keyword.trim() != ''">
+            and course_name LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+    </select>
+
+    <insert id="insertCourse" useGeneratedKeys="true" keyProperty="id" parameterType="com.ssm.demo.entity.Course">
+		insert into
+		tb_ssm_course(course_id,course_name,course_teacher,
+		    course_info,course_grade,start_time)
+		values(#{courseId},#{courseName},#{courseTeacher}
+		    ,#{courseInfo},#{courseGrade},#{startTime})
+	</insert>
+
+    <update id="updCourse" parameterType="com.ssm.demo.entity.Course">
+		update tb_ssm_course
+		set
+		    course_name=#{courseName},
+		    course_teacher=#{courseTeacher},
+		    course_info=#{courseInfo},
+		    course_grade=#{courseGrade},
+		    start_time=#{startTime},
+		    update_time=#{updateTime}
+		where course_id=#{courseId}
+	</update>
+
+    <select id="getCourseById" parameterType="java.lang.Long" resultMap="CourseResult">
+		select course_id,course_name,course_teacher,
+		    course_info,course_grade,start_time,
+		    create_time,update_time
+		from tb_ssm_course where course_id=#{courseId} and is_deleted=0
+	</select>
+
+    <update id="deleteBatch">
+        delete from tb_ssm_course where course_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="getTeacherSelect" resultType="com.ssm.demo.utils.SelectOption">
+        select
+            teacher_id as id,
+            teacher_name as val
+        from tb_ssm_teacher
+        where is_deleted=0
+    </select>
+</mapper>
