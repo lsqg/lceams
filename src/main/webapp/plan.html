@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>教务后台管理系统</title>
+    <!-- jqgrid ui -->
+    <link href="plugins/jqgrid-5.3.0/ui.jqgrid-bootstrap4.css" rel="stylesheet"/>
+    <link rel="stylesheet" href="plugins/bootstrap/css/bootstrap.css">
+    <link rel="stylesheet" href="plugins/flatpickr/flatpickr.dark.min.css">
+    <!-- kindeditor -->
+    <link rel="stylesheet" href="plugins/kindeditor-4.1.10/themes/default/default.css"/>
+    <link href="dist/css/main.css" rel="stylesheet"/>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <!-- kindeditor -->
+    <script charset="utf-8" src="plugins/kindeditor-4.1.10/kindeditor-all.js"></script>
+    <script charset="utf-8" src="plugins/kindeditor-4.1.10/lang/zh_CN.js"></script>
+    <!-- sweet alert -->
+    <link rel="stylesheet" href="plugins/sweetalert/sweetalert.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/adminlte.min.css">
+</head>
+<body class="hold-transition sidebar-mini" onLoad="checkCookie();">
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="content-wrapper">
+        <!-- Content Header (Page header) -->
+        <div class="content-header">
+            <div class="container-fluid">
+                <div class="row mb-2">
+                    <div class="col-sm-6">
+                        <h1 class="m-0 text-dark">学习计划管理</h1>
+                    </div><!-- /.col -->
+                </div><!-- /.row -->
+            </div><!-- /.container-fluid -->
+        </div>
+
+        <!-- Main content -->
+        <div class="content">
+            <div class="row">
+                <div class="col-12">
+                    <div class="card">
+                        <div class="card-body">
+                            <div class="grid-btn">
+                                <button class="btn btn-info" onclick="planAdd()"><i
+                                        class="fa fa-plus"></i>&nbsp;新增
+                                </button>
+                                <button class="btn btn-info" onclick="planEdit()"><i
+                                        class="fa fa-pencil-square-o"></i>&nbsp;查看
+                                </button>
+                                <button class="btn btn-danger" onclick="deletePlan()"><i
+                                        class="fa fa-trash-o"></i>&nbsp;删除
+                                </button>&nbsp;&nbsp;
+                                <input type="text" placeholder="关键字" id="keyword" class="form-control col-1">&nbsp;
+                                <button class="btn btn-info" onclick="search()"><i
+                                        class="fa fa-search"></i>&nbsp;搜索
+                                </button>
+                            </div>
+                            <table id="jqGrid" class="table table-bordered">
+                            </table>
+                            <div id="jqGridPager"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div class="modal fade" id="planModal" tabindex="-1" role="dialog" aria-labelledby="planModalLabel">
+                <div class="modal-dialog" role="document">
+                    <div class="modal-content" style="width: 800px;height: 960px;">
+                        <div class="modal-header">
+                            <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                                    aria-hidden="true">&times;</span></button>
+                            <h6 class="modal-title" id="planModalLabel">编辑</h6>
+                        </div>
+                        <div class="modal-body">
+                            <form>
+                                <div class="form-group">
+                                    <div class="alert alert-danger">错误信息展示栏。</div>
+                                </div>
+                                <input type="hidden" id="planId" value="0">
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <font color="red">*</font>
+                                        <label for="planTitle" class="control-label">学习计划标题:</label>
+                                        <input type="text" class="form-control" style="width: 80%" id="planTitle">
+                                    </div>
+                                    <div class="form-group col-6">
+                                        <font color="red">*</font>
+                                        <label for="planAuthor" class="control-label">计划者:</label>
+                                        <input type="text" class="form-control" readonly="true" style="width: 80%" id="planAuthor">
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-6">
+                                        <font color="red">*</font>
+                                        <label for="planGrade" class="control-label">计划班级:</label>
+                                        <select id="planGrade" class="form-control" style="width: 80%">
+                                            <option></option>
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="form-group">
+                                    <font color="red">*</font>
+                                    <label class="control-label">内容:</label>
+                                    <textarea class="form-control" id="editor"
+                                              style="width:700px;height:450px;"></textarea>
+                                </div>
+                            </form>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-default" data-dismiss="modal">取消</button>
+                            <button type="button" class="btn btn-primary" id="saveButton">确认</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- /.modal -->
+        </div>
+    </div>
+
+    <aside class="control-sidebar control-sidebar-dark">
+    </aside>
+
+<!-- jQuery -->
+<script src="plugins/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="plugins/jQueryUI/jquery-ui.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" src="plugins/flatpickr/flatpickr.min.js"></script>
+<script src="plugins/jqgrid-5.3.0/grid.locale-cn.js"></script>
+<!-- sweet alert -->
+<script src="plugins/sweetalert/sweetalert.min.js"></script>
+<script src="plugins/jqgrid-5.3.0/jquery.jqGrid.min.js"></script>
+<script type="text/javascript" src="dist/js/plan.js"></script>
+<script type="text/javascript" src="dist/js/public.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/adminlte.js"></script>
+</body>
+</html>

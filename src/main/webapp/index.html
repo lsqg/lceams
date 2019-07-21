@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <title>教务后台管理系统</title>
+    <!-- Tell the browser to be responsive to screen width -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="plugins/font-awesome/css/font-awesome.min.css">
+    <!-- sweet alert -->
+    <link rel="stylesheet" href="plugins/sweetalert/sweetalert.css">
+    <!-- Ionicons -->
+    <link rel="stylesheet" href="dist/css/ionicons.min.css">
+    <!-- Theme style -->
+    <link rel="stylesheet" href="dist/css/adminlte.min.css">
+</head>
+<body class="hold-transition sidebar-mini" onLoad="checkCookie();">
+<div class="wrapper">
+
+    <!-- Navbar -->
+    <nav class="main-header navbar navbar-expand bg-white navbar-light border-bottom">
+        <!-- Left navbar links -->
+        <ul class="navbar-nav">
+            <li class="nav-item">
+                <a class="nav-link" data-widget="pushmenu" href="#"><i class="fa fa-bars"></i></a>
+            </li>
+            <li class="nav-item d-none d-sm-inline-block">
+                <a href="hello.html" target="iframe" class="nav-link">Home</a>
+            </li>
+        </ul>
+    </nav>
+    <!-- /.navbar -->
+
+    <!-- Main Sidebar Container -->
+    <aside class="main-sidebar sidebar-dark-primary elevation-4">
+
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <div class="user-panel mt-3 pb-3 mb-3 d-flex">
+                <div class="info">
+                    <a href="personal.html" target="iframe" id="msg" class="d-block">修改密码</a>
+                </div>
+            </div>
+
+            <!-- Sidebar Menu -->
+            <nav class="mt-2">
+                <ul class="nav nav-pills nav-sidebar flex-column" data-widget="treeview" role="menu"
+                    data-accordion="false" id="left_ul">
+                    <li class="nav-header">教务管理</li>
+                    <li class="nav-item">
+                        <a href="user.html" class="nav-link" target="iframe">
+                            <i class="fa fa-user-circle nav-icon"></i>
+                            <p>用户管理</p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="grade.html" class="nav-link" target="iframe">
+                            <i class="nav-icon fa fa-edit"></i>
+                            <p>
+                                班级管理
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="teacher.html" class="nav-link" target="iframe">
+                            <i class="nav-icon fa fa-edit"></i>
+                            <p>
+                                教师管理
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="student.html" class="nav-link" target="iframe">
+                            <i class="nav-icon fa fa-edit"></i>
+                            <p>
+                                学生管理
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="course.html" class="nav-link" target="iframe">
+                            <i class="nav-icon fa fa-edit"></i>
+                            <p>
+                                课程管理
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="achi.html" class="nav-link" target="iframe">
+                            <i class="nav-icon fa fa-edit"></i>
+                            <p>
+                                成绩管理
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="plan.html" class="nav-link" target="iframe">
+                            <i class="nav-icon fa fa-edit"></i>
+                            <p>
+                                学习计划管理
+                            </p>
+                        </a>
+                    </li>
+                    <li class="nav-item">
+                        <a href="article.html" class="nav-link" target="iframe">
+                            <i class="nav-icon fa fa-edit"></i>
+                            <p>
+                                文章管理
+                            </p>
+                        </a>
+                    </li>
+                </ul>
+            </nav>
+            <!-- /.sidebar-menu -->
+        </div>
+        <!-- /.sidebar -->
+    </aside>
+
+    <!-- Content Wrapper. Contains page content -->
+    <div class="col-12">
+
+        <iframe name="iframe" id="iframe" src="hello.html" frameborder="0" align="left" width="100%" height="700px" scrolling="auto">
+            <p>你的浏览器不支持iframe标签</p>
+        </iframe>
+
+    </div>
+
+    <!-- Control Sidebar -->
+    <aside class="control-sidebar control-sidebar-dark">
+        <!-- Control sidebar content goes here -->
+    </aside>
+    <!-- /.control-sidebar -->
+</div>
+<!-- ./wrapper -->
+
+<!-- jQuery -->
+<script src="plugins/jquery/jquery.min.js"></script>
+<!-- jQuery UI 1.11.4 -->
+<script src="plugins/jQueryUI/jquery-ui.min.js"></script>
+<!-- Bootstrap 4 -->
+<script src="plugins/bootstrap/js/bootstrap.bundle.min.js"></script>
+<!-- AdminLTE App -->
+<script src="dist/js/adminlte.js"></script>
+<!-- sweet alert -->
+<script src="plugins/sweetalert/sweetalert.min.js"></script>
+<script src="dist/js/public.js"></script>
+</body>
+</html>

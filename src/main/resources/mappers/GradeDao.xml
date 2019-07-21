@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssm.demo.dao.GradeDao">
+    <resultMap type="com.ssm.demo.entity.Grade" id="GradeResult">
+        <result property="gradeId" column="grade_id"/>
+        <result property="gradeName" column="grade_name"/>
+        <result property="gradeTeacher" column="grade_teacher"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+    <select id="findGrades" parameterType="Map" resultMap="GradeResult">
+        select grade_id,grade_name,tb_ssm_teacher.teacher_name as grade_teacher,
+            tb_ssm_grade.create_time,tb_ssm_grade.update_time
+        from tb_ssm_grade
+        left join tb_ssm_teacher on tb_ssm_grade.grade_teacher = tb_ssm_teacher.teacher_id
+        where tb_ssm_grade.is_deleted=0
+        <if test="keyword != null and keyword.trim() != ''">
+            and grade_teacher LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+        order by grade_id desc
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="getTotalGrades" parameterType="Map" resultType="int">
+        select count(*) from tb_ssm_grade
+        where is_deleted=0
+        <if test="keyword != null and keyword.trim() != ''">
+            and grade_teacher LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+    </select>
+
+    <insert id="insertGrade" useGeneratedKeys="true" keyProperty="id" parameterType="com.ssm.demo.entity.Grade">
+		insert into
+		tb_ssm_grade(grade_id,grade_name,grade_teacher)
+		values(#{gradeId},#{gradeName},#{gradeTeacher})
+	</insert>
+
+    <update id="updGrade" parameterType="com.ssm.demo.entity.Grade">
+		update tb_ssm_grade
+		set
+		grade_id=#{gradeId},grade_name=#{gradeName},
+		grade_teacher=#{gradeTeacher},update_time=#{updateTime}
+		where grade_id=#{gradeId}
+	</update>
+
+    <select id="getGradeById" parameterType="java.lang.Long" resultMap="GradeResult">
+		select grade_id,grade_name,grade_teacher,create_time,update_time
+		from tb_ssm_grade where grade_id=#{gradeId} and is_deleted=0
+	</select>
+
+    <update id="deleteBatch">
+        delete from tb_ssm_grade where grade_id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="getTeacherSelect" resultType="com.ssm.demo.utils.SelectOption">
+        select
+            teacher_id as id,
+            teacher_name as val
+        from tb_ssm_teacher
+        where is_deleted=0
+    </select>
+</mapper>

@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ssm.demo.dao.PlanDao">
+    <resultMap type="com.ssm.demo.entity.Plan" id="PlanResult">
+        <result property="id" column="id"/>
+        <result property="planTitle" column="plan_title"/>
+        <result property="content" column="content"/>
+        <result property="planAuthor" column="plan_author"/>
+        <result property="planGrade" column="plan_grade"/>
+        <result property="createTime" column="create_time" jdbcType="TIMESTAMP"/>
+        <result property="updateTime" column="update_time" jdbcType="TIMESTAMP"/>
+        <result property="isDeleted" column="is_deleted"/>
+    </resultMap>
+    <select id="findPlans" parameterType="Map" resultMap="PlanResult">
+        select id,plan_title,plan_author,tb_ssm_grade.grade_name as plan_grade,content,
+            tb_ssm_plan.create_time,tb_ssm_plan.update_time
+        from tb_ssm_plan
+        left join tb_ssm_grade on tb_ssm_plan.plan_grade = tb_ssm_grade.grade_id
+        where tb_ssm_plan.is_deleted=0
+        <if test="keyword != null and keyword.trim() != ''">
+            and plan_title LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+        order by id desc
+        <if test="start!=null and limit!=null">
+            limit #{start},#{limit}
+        </if>
+    </select>
+
+    <select id="getTotalPlans" parameterType="Map" resultType="int">
+        select count(*) from tb_ssm_plan
+        where is_deleted=0
+        <if test="keyword != null and keyword.trim() != ''">
+            and plan_title LIKE CONCAT(CONCAT('%', #{keyword}), '%')
+        </if>
+        <if test="startTime != null and startTime.trim() != ''">
+            and create_time &gt; #{startTime}
+        </if>
+        <if test="endTime != null and endTime.trim() != ''">
+            and create_time &lt; #{endTime}
+        </if>
+    </select>
+
+    <insert id="insertPlan" useGeneratedKeys="true" keyProperty="id" parameterType="com.ssm.demo.entity.Plan">
+		insert into
+		    tb_ssm_plan(plan_title,content,plan_author,plan_grade)
+		values(#{planTitle},#{content},#{planAuthor},#{planGrade})
+	</insert>
+
+    <update id="updPlan" parameterType="com.ssm.demo.entity.Plan">
+		update tb_ssm_plan
+		set
+		    plan_title=#{planTitle},content=#{content},
+		    plan_author=#{planAuthor},plan_grade=#{planGrade},
+		    update_time=#{updateTime}
+		where id=#{id}
+	</update>
+
+
+    <update id="delPlan" parameterType="java.lang.Long">
+		update tb_ssm_plan
+		set is_deleted=1
+		where id=#{id}
+	</update>
+
+    <select id="getPlanById" parameterType="java.lang.Long" resultMap="PlanResult">
+		select id,plan_title,content,plan_author,plan_grade,create_time,update_time
+		from tb_ssm_plan where id=#{id} and is_deleted=0
+	</select>
+
+    <update id="deleteBatch">
+        update tb_ssm_plan
+        set is_deleted=1 where id in
+        <foreach item="id" collection="array" open="(" separator="," close=")">
+            #{id}
+        </foreach>
+    </update>
+
+    <select id="getGradeSelect" resultType="com.ssm.demo.utils.SelectOption">
+        select
+            grade_id as id,
+            grade_name as val
+        from tb_ssm_grade
+        where is_deleted=0
+    </select>
+</mapper>
