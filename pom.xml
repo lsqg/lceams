@@ -14,7 +14,7 @@
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <spring.version>4.2.4.RELEASE</spring.version>
         <java.version>1.8</java.version>
-        <jdbc.driver.version>8.0.11</jdbc.driver.version>
+        <jdbc.driver.version>8.0.28</jdbc.driver.version>
         <aspectj.version>1.7.4</aspectj.version>
         <javax.servlet-api.version>3.1.0</javax.servlet-api.version>
         <jsp-api.version>2.2</jsp-api.version>
